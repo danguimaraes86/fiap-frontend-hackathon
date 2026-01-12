@@ -1,0 +1,52 @@
+@use '@angular/material' as mat;
+@use './custom-colors.scss' as _custom-colors;
+
+@include mat.core();
+
+$custom-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: _custom-colors.$primary-palette,
+      tertiary: _custom-colors.$tertiary-palette,
+    ),
+  )
+);
+
+$custom-dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: _custom-colors.$primary-palette,
+      tertiary: _custom-colors.$tertiary-palette,
+    ),
+  )
+);
+
+html {
+  @include mat.system-level-typography($custom-theme);
+  @include mat.system-classes();
+
+  @include mat.system-level-colors($custom-theme);
+  @include mat.all-component-themes($custom-theme);
+
+  // Tema escuro
+  &.dark-theme {
+    @include mat.system-level-colors($custom-dark-theme);
+    @include mat.all-component-colors($custom-dark-theme);
+  }
+
+  height: 100%;
+  background-color: var(--mat-sys-background);
+}
+
+body {
+  color-scheme: light;
+
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  margin: 0;
+  height: 100%;
+}
