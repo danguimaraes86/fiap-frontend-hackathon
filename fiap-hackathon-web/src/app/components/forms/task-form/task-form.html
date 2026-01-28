@@ -1,10 +1,7 @@
-<h2 mat-dialog-title class="d-flex align-items-center gap-2 p-3">
-  <mat-icon>add_task</mat-icon>
-  Nova Tarefa
-</h2>
+<h2 mat-dialog-title>Nova Tarefa</h2>
 
 <mat-dialog-content>
-  <form [formGroup]="taskForm" class="d-flex flex-column gap-3">
+  <form [formGroup]="taskForm" class="d-flex flex-column gap-3 py-3">
     <mat-form-field appearance="outline" class="w-100">
       <mat-label>Título</mat-label>
       <input matInput formControlName="title" placeholder="Digite o título da tarefa" />
@@ -33,9 +30,9 @@
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Status</mat-label>
           <mat-select formControlName="status">
-            @for (status of statuses; track status) {
-              <mat-option [value]="status">
-                {{ statusLabels[status] }}
+            @for (status of statusList; track status) {
+              <mat-option [value]="status.value">
+                {{ status.label }}
               </mat-option>
             }
           </mat-select>
@@ -46,9 +43,9 @@
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Prioridade</mat-label>
           <mat-select formControlName="priority">
-            @for (priority of priorities; track priority) {
-              <mat-option [value]="priority">
-                {{ priorityLabels[priority] }}
+            @for (priority of priorityList; track priority) {
+              <mat-option [value]="priority.value">
+                {{ priority.label }}
               </mat-option>
             }
           </mat-select>
@@ -63,6 +60,7 @@
           <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
           <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
           <mat-datepicker #startPicker></mat-datepicker>
+          <mat-hint>DD/MM/AAAA</mat-hint>
         </mat-form-field>
       </div>
 
@@ -72,10 +70,10 @@
           <input matInput [matDatepicker]="duePicker" formControlName="dueDate" />
           <mat-datepicker-toggle matSuffix [for]="duePicker"></mat-datepicker-toggle>
           <mat-datepicker #duePicker></mat-datepicker>
+          <mat-hint>DD/MM/AAAA</mat-hint>
         </mat-form-field>
       </div>
     </div>
-
   </form>
 </mat-dialog-content>
 
