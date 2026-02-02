@@ -3,14 +3,14 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { provideLuxonDateAdapter } from '@angular/material-luxon-adapter';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerIntl, MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatSelectModule } from '@angular/material/select';
 import { DateTime } from 'luxon';
-import { TASK_PRIORITIES, TASK_STATUSES, TaskPriority, TaskStatus } from '../../../models/task.models';
+import { Task, TASK_STATUSES, TaskStatus } from '../../../models/task.models';
 import { TaskService } from '../../../services/task.service';
 
 @Injectable()
@@ -32,9 +32,7 @@ interface TaskFormData {
   title: FormControl<string>,
   description: FormControl<string | null>,
   status: FormControl<TaskStatus>,
-  priority: FormControl<TaskPriority>,
   dueDate: FormControl<DateTime<boolean> | null>,
-  startDate: FormControl<DateTime<boolean> | null>,
 }
 
 @Component({
@@ -61,12 +59,12 @@ export class TaskForm {
   private _taskService = inject(TaskService)
   private _fb = inject(FormBuilder);
   private _dialogRef = inject(MatDialogRef<TaskForm>);
+  payload = inject<{ task: Task } | null>(MAT_DIALOG_DATA);
 
   taskForm: FormGroup<TaskFormData>;
   isLoading = false;
 
   statusList = Object.values(TASK_STATUSES);
-  priorityList = Object.values(TASK_PRIORITIES);
 
   constructor() {
     this.taskForm = this._fb.group<TaskFormData>({
@@ -77,32 +75,51 @@ export class TaskForm {
       status: this._fb.control(TASK_STATUSES.PENDING.value, {
         nonNullable: true, validators: [Validators.required]
       }),
-      priority: this._fb.control(TASK_PRIORITIES.MEDIUM.value, {
-        nonNullable: true, validators: [Validators.required]
-      }),
       dueDate: this._fb.control<DateTime | null>(null),
-      startDate: this._fb.control<DateTime | null>(null),
     });
+
+    if (this.payload) {
+      const { task } = this.payload
+      this.taskForm.patchValue({
+        title: task.title,
+        description: task.description ?? null,
+        status: task.status,
+        dueDate: task.dueDate ? DateTime.fromISO(task.dueDate) : null,
+      });
+    }
   }
 
   onSubmit(): void {
     if (this.taskForm.valid) {
       this.isLoading = true;
-      const formValue = this.taskForm.getRawValue();
 
-      this._taskService.addTask({
-        title: formValue.title,
-        description: formValue.description,
-        status: formValue.status,
-        priority: formValue.priority,
-        dueDate: formValue.dueDate?.toISODate() ?? null,
-        startDate: formValue.startDate?.toISODate() ?? null,
-        createdAt: DateTime.now().toISO(),
-        updatedAt: DateTime.now().toISO()
-      })
-
+      this.payload ? this.handleUpdateTask() : this.handleCreateTask()
       this._dialogRef.close();
     }
+  }
+
+  private handleCreateTask() {
+    const formValue = this.taskForm.getRawValue();
+    this._taskService.addTask({
+      title: formValue.title,
+      description: formValue.description,
+      status: formValue.status,
+      dueDate: formValue.dueDate?.toISODate() ?? null,
+      createdAt: DateTime.now().toISO(),
+      updatedAt: DateTime.now().toISO()
+    })
+  }
+
+  private handleUpdateTask() {
+    const formValue = this.taskForm.getRawValue()
+
+    this._taskService.updateTask(this.payload?.task.id!, {
+      title: formValue.title,
+      description: formValue.description ?? null,
+      status: formValue.status,
+      dueDate: formValue.dueDate?.toISODate() ?? null,
+      updatedAt: DateTime.now().toISO()
+    })
   }
 
   onCancel(): void {

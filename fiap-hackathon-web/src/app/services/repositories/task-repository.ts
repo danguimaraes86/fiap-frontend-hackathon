@@ -2,21 +2,43 @@ import { Injectable } from '@angular/core';
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
+  DocumentData,
+  FirestoreDataConverter,
   getDocs,
   getFirestore,
   orderBy,
   query,
-  where
+  QueryDocumentSnapshot,
+  updateDoc,
+  where,
+  WithFieldValue
 } from 'firebase/firestore';
 import { firebaseApp } from '../../configs/firebase.config';
 import { Task } from '../../models/task.models';
+
+const taskConverter: FirestoreDataConverter<Task> = {
+  toFirestore(task: WithFieldValue<Task>): DocumentData {
+    const { id, ...data } = task as Task;
+    return Object.fromEntries(
+      Object.entries(data).filter(([_, value]) => value !== undefined && value !== null)
+    );
+  },
+  fromFirestore(snapshot: QueryDocumentSnapshot): Task {
+    return {
+      ...snapshot.data(),
+      id: snapshot.id,
+    } as Task;
+  }
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskRepository {
   private _db = getFirestore(firebaseApp);
-  private _taskCollection = collection(this._db, 'tasks')
+  private _taskCollection = collection(this._db, 'tasks').withConverter(taskConverter)
 
   async getAllTasksByUserId(userId: string) {
     const querySnapshot = await getDocs(query(
@@ -24,29 +46,19 @@ export class TaskRepository {
       where('userId', '==', userId),
       orderBy('createdAt', 'desc')
     ));
-    return querySnapshot.docs.map(doc => {
-      return { ...doc.data() } as Task
-    });
+    return querySnapshot.docs.map(doc => doc.data());
   }
 
   async createTask(task: Omit<Task, 'id' | 'completedAt'>) {
-    const doc = await addDoc(this._taskCollection, this.normalizeObjects(task))
-    return doc.id
+    const docRef = await addDoc(this._taskCollection, task);
+    return docRef.id;
   }
 
-  private normalizeObjects(task: any) {
-    return Object.fromEntries(
-      Object.entries(task).filter(([_, value]) => value !== undefined && value !== null)
-    );
+  async updateTask(docId: string, task: Omit<Task, 'id' | 'userId' | 'createdAt' | 'completedAt'>) {
+    return await updateDoc(doc(this._taskCollection, docId), taskConverter.toFirestore(task as Task))
   }
 
-  // async updateTransaction(docId: string, data: any) {
-  //   const docRef = doc(this._taskCollection, docId);
-  //   return await updateDoc(docRef, data)
-  // }
-
-  // async deleteTransaction(docId: string) {
-  //   const docRef = doc(this._taskCollection, docId);
-  //   return await deleteDoc(docRef)
-  // }
+  async deleteTask(taskId: string) {
+    return await deleteDoc(doc(this._taskCollection, taskId))
+  }
 }

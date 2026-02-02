@@ -8,11 +8,9 @@ export interface Task {
 
   // Organização
   status: TaskStatus
-  priority: TaskPriority
 
   // Prazos
   dueDate: string | null
-  startDate: string | null
 
   // Tracking
   createdAt: string
@@ -21,17 +19,30 @@ export interface Task {
 }
 
 export const TASK_STATUSES = {
-  PENDING: { value: 'pending', label: 'Pendente' },
-  IN_PROGRESS: { value: 'in_progress', label: 'Em Progresso' },
-  COMPLETED: { value: 'completed', label: 'Concluída' },
-  CANCELLED: { value: 'cancelled', label: 'Cancelada' }
+  PENDING: {
+    value: 'pending',
+    label: 'Pendente',
+    class: 'status-pending',
+  },
+  IN_PROGRESS: {
+    value: 'in_progress',
+    label: 'Em Progresso',
+    class: 'status-in-progress',
+  },
+  COMPLETED: {
+    value: 'completed',
+    label: 'Concluída',
+    class: 'status-completed',
+  },
+  CANCELLED: {
+    value: 'cancelled',
+    label: 'Cancelada',
+    class: 'status-cancelled',
+  }
 } as const
 export type TaskStatus = typeof TASK_STATUSES[keyof typeof TASK_STATUSES]['value']
 
-export const TASK_PRIORITIES = {
-  LOW: { value: 'low', label: 'Baixa' },
-  MEDIUM: { value: 'medium', label: 'Média' },
-  HIGH: { value: 'high', label: 'Alta' },
-  URGENT: { value: 'urgent', label: 'Urgente' }
-} as const
-export type TaskPriority = typeof TASK_PRIORITIES[keyof typeof TASK_PRIORITIES]['value']
+export function getTaskStatusInfo(status: TaskStatus) {
+  return Object.values(TASK_STATUSES).find(s => s.value === status) ??
+    { value: status, label: status, class: '#5d5f5f' }
+}

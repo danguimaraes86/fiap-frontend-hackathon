@@ -41,31 +41,6 @@
 
       <div class="col-md-6">
         <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Prioridade</mat-label>
-          <mat-select formControlName="priority">
-            @for (priority of priorityList; track priority) {
-              <mat-option [value]="priority.value">
-                {{ priority.label }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div class="row g-3">
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Data de Início</mat-label>
-          <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
-          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-          <mat-datepicker #startPicker></mat-datepicker>
-          <mat-hint>DD/MM/AAAA</mat-hint>
-        </mat-form-field>
-      </div>
-
-      <div class="col-md-6">
-        <mat-form-field appearance="outline" class="w-100">
           <mat-label>Data de Entrega</mat-label>
           <input matInput [matDatepicker]="duePicker" formControlName="dueDate" />
           <mat-datepicker-toggle matSuffix [for]="duePicker"></mat-datepicker-toggle>
