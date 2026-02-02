@@ -1,5 +1,4 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import {
   Auth,
@@ -12,10 +11,10 @@ import {
   signInWithEmailAndPassword,
   updateProfile
 } from 'firebase/auth';
-import { SnackBar } from '../components/snack-bar/snack-bar';
-import { getFirebaseErrorMessage } from '../configs/firebase-error.utils';
 import { firebaseApp } from '../configs/firebase.config';
 import { LoginRequest, SignUpRequest } from '../models/authentication.models';
+import { getFirebaseErrorMessage } from '../utils/firebase-error.utils';
+import { ErrorService } from './error.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +22,7 @@ import { LoginRequest, SignUpRequest } from '../models/authentication.models';
 export class AuthenticationService {
   private _firebaseAuth: Auth;
   private _router = inject(Router)
-  private readonly _snackBarRef = inject(MatSnackBar);
+  private _errorService = inject(ErrorService)
 
   private _user = signal<FirebaseUser | null>(null);
   public user = this._user.asReadonly()
@@ -58,7 +57,8 @@ export class AuthenticationService {
       await updateProfile(credential.user, { displayName: request.name });
       this._router.navigate(['dashboard'])
     } catch (error) {
-      this.handleAuthError(error as AuthError)
+      const err = error as AuthError
+      this._errorService.handleFirebaseError(getFirebaseErrorMessage(err.code), err)
     } finally {
       this._isLoading.set(false)
     }
@@ -74,7 +74,8 @@ export class AuthenticationService {
       );
       this._router.navigate(['dashboard'])
     } catch (error) {
-      this.handleAuthError(error as AuthError);
+      const err = error as AuthError
+      this._errorService.handleFirebaseError(getFirebaseErrorMessage(err.code), err)
     } finally {
       this._isLoading.set(false)
     }
@@ -86,18 +87,8 @@ export class AuthenticationService {
       this._user.set(null);
       this._router.navigate([''])
     } catch (error) {
-      this.handleAuthError(error as AuthError);
+      const err = error as AuthError
+      this._errorService.handleFirebaseError(getFirebaseErrorMessage(err.code), err)
     }
-  }
-
-  private handleAuthError(error: AuthError): void {
-    this._snackBarRef.openFromComponent(SnackBar, {
-      duration: 5000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-      panelClass: ['error-snackbar'],
-      data: getFirebaseErrorMessage(error.code)
-    })
-    console.error('Firebase Auth Error:', error.code);
   }
 }
