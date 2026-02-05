@@ -17,7 +17,9 @@ describe('DashboardView', () => {
 
     taskService = {
       getAllTask: vi.fn(),
-      tasks: vi.fn().mockReturnValue([])
+      allTasks: vi.fn().mockReturnValue([]),
+      completedTasks: vi.fn().mockReturnValue([]),
+      pendingAndProgressTasks: vi.fn().mockReturnValue([]),
     };
 
     await TestBed.configureTestingModule({
