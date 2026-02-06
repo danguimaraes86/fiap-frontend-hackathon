@@ -9,6 +9,10 @@
       ),
     )
   );
+
+  .mat-expansion-panel-body{
+    padding: 0px;
+  }
 }
 
 .error-snackbar {

@@ -17,7 +17,7 @@
           Sem Data
         }
       </span>
-      <mat-chip [ngClass]="[getStatusInfo(task().status).class]">
+      <mat-chip [class]="[getStatusInfo(task().status).class]">
         {{ getStatusInfo(task().status).label }}
       </mat-chip>
     </span>

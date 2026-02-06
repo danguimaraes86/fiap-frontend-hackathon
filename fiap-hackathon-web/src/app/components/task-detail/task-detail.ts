@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { MatCheckbox, MatCheckboxChange } from "@angular/material/checkbox";
 import { MatChip } from "@angular/material/chips";
@@ -17,7 +16,6 @@ import { MenuButton } from "./menu-button/menu-button";
     MatListItemMeta,
     MatCheckbox,
     MatChip,
-    NgClass,
     MenuButton
   ],
   templateUrl: './task-detail.html',

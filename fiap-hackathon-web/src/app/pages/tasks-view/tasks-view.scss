@@ -7,15 +7,3 @@
     width: auto;
   }
 }
-
-
-mat-panel-description {
-  width: 75%;
-  justify-content: end;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    width: auto;
-    justify-content: space-between;
-  }
-}

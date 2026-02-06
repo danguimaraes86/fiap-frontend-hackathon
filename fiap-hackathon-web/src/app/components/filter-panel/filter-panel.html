@@ -1,0 +1,27 @@
+<mat-expansion-panel class="mb-3">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <mat-icon class="me-3">filter_list</mat-icon>
+      Filtros
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <div class="d-flex justify-content-around align-items-center p-0">
+    <mat-form-field>
+      <mat-label>Título</mat-label>
+      <input matInput [value]="title()" (input)="onTitleFilterChange($event.target.value)" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Status da Tarefa</mat-label>
+      <mat-select [value]="status()" (selectionChange)="onStatusFilterChange($event.value)">
+        @for (status of statusList; track status) {
+          <mat-option [value]="status.value">
+            {{ status.label }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <mat-action-row>
+    <button matButton (click)="clearFilters()">Limpar</button>
+  </mat-action-row>
+</mat-expansion-panel>
