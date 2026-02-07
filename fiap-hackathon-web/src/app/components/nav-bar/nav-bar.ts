@@ -4,11 +4,19 @@ import { AuthenticationService } from '../../services/authentication.service';
 import { LoginButton } from "./login-button/login-button";
 import { Logo } from "./logo/logo";
 import { LogoutButton } from "./logout-button/logout-button";
+import { PreferencesButton } from "./preferences-button/preferences-button";
 import { SignupButton } from "./signup-button/signup-button";
 
 @Component({
   selector: 'app-nav-bar',
-  imports: [MatToolbar, Logo, LogoutButton, LoginButton, SignupButton],
+  imports: [
+    MatToolbar,
+    Logo,
+    LogoutButton,
+    LoginButton,
+    SignupButton,
+    PreferencesButton
+  ],
   templateUrl: './nav-bar.html',
   styleUrl: './nav-bar.scss',
 })

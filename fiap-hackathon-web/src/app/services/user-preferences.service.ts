@@ -1,0 +1,35 @@
+import { inject, Injectable, signal } from '@angular/core';
+import { DEFAULT_USER_PREFERENCES, UserPreferences } from '../models/user-preferences.models';
+import { UserPreferencesRepository } from './repositories/user-preferences-repository';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class UserPreferencesService {
+
+  private _repository = inject(UserPreferencesRepository)
+
+  private _userPreference = signal<UserPreferences>({ ...DEFAULT_USER_PREFERENCES, userId: null, id: null })
+  public userPreference = this._userPreference.asReadonly()
+
+  async getUserPreferences(userId: string) {
+    const preferences = await this._repository.getUserPreferences(userId)
+    preferences ? this._userPreference.set(preferences) : this.createUserPreference(userId)
+  }
+
+  async createUserPreference(userId: string) {
+    const preferences: Omit<UserPreferences, 'id'> = {
+      userId, ...DEFAULT_USER_PREFERENCES
+    }
+    const docId = await this._repository.createUserPreferences(preferences)
+    this._userPreference.set({ id: docId, ...preferences })
+  }
+
+  async updateUserPreference(preferences: UserPreferences) {
+    await this._repository.updateUserPreferences(preferences.id!, preferences)
+    this._userPreference.update(value => {
+      return { ...value, ...preferences }
+    })
+  }
+
+}

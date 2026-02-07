@@ -15,6 +15,7 @@ import { firebaseApp } from '../configs/firebase.config';
 import { LoginRequest, SignUpRequest } from '../models/authentication.models';
 import { getFirebaseErrorMessage } from '../utils/firebase-error.utils';
 import { ErrorService } from './error.service';
+import { UserPreferencesService } from './user-preferences.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class AuthenticationService {
   private _firebaseAuth: Auth;
   private _router = inject(Router)
   private _errorService = inject(ErrorService)
+  private _preferecesService = inject(UserPreferencesService)
 
   private _user = signal<FirebaseUser | null>(null);
   public user = this._user.asReadonly()
@@ -38,6 +40,9 @@ export class AuthenticationService {
   initAuthStateListener() {
     onAuthStateChanged(this._firebaseAuth, (user) => {
       this._user.set(user);
+      if (user) {
+        this._preferecesService.getUserPreferences(user.uid)
+      }
       this._isLoading.set(false)
     });
   }
@@ -55,6 +60,7 @@ export class AuthenticationService {
         request.password
       );
       await updateProfile(credential.user, { displayName: request.name });
+      await this._preferecesService.createUserPreference(credential.user.uid)
       this._router.navigate(['dashboard'])
     } catch (error) {
       const err = error as AuthError
@@ -67,11 +73,12 @@ export class AuthenticationService {
   async userLogin(request: LoginRequest): Promise<void> {
     this._isLoading.set(true)
     try {
-      await signInWithEmailAndPassword(
+      const credential = await signInWithEmailAndPassword(
         this._firebaseAuth,
         request.email,
         request.password
       );
+      this._preferecesService.getUserPreferences(credential.user.uid)
       this._router.navigate(['dashboard'])
     } catch (error) {
       const err = error as AuthError

@@ -4,6 +4,7 @@
   </span>
   <span class="d-flex align-items-center">
     @if (this.isAuthenticated()) {
+      <app-preferences-button />
       <app-logout-button />
     } @else {
       <app-signup-button />

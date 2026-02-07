@@ -6,9 +6,10 @@ import { MatChip, MatChipAvatar } from "@angular/material/chips";
 import { MatIcon } from "@angular/material/icon";
 import { RouterLink } from "@angular/router";
 import { FloatingButton } from "../../components/floating-button/floating-button";
+import { getTaskStatusInfo } from '../../models/task.models';
 import { AuthenticationService } from '../../services/authentication.service';
 import { TaskService } from '../../services/task.service';
-import { getTaskStatusInfo } from '../../models/task.models';
+import { UserPreferencesService } from '../../services/user-preferences.service';
 
 @Component({
   selector: 'app-dashboard-view',
@@ -32,6 +33,7 @@ import { getTaskStatusInfo } from '../../models/task.models';
 })
 export class DashboardView implements OnDestroy {
   private _authService = inject(AuthenticationService)
+  private _preferencesService = inject(UserPreferencesService)
   private _taskService = inject(TaskService)
 
   protected pendingAndProgressTasks = this._taskService.pendingAndProgressTasks
@@ -48,17 +50,17 @@ export class DashboardView implements OnDestroy {
   protected taskStatuses = computed(() => {
     const pending = this.pendingTasks();
     const inProgress = this.inProgressTasks();
-    
+
     return [
-      { 
-        ...getTaskStatusInfo('pending'), 
-        icon: 'pending_actions', 
-        count: pending.length 
+      {
+        ...getTaskStatusInfo('pending'),
+        icon: 'pending_actions',
+        count: pending.length
       },
-      { 
-        ...getTaskStatusInfo('in_progress'), 
-        icon: 'assignment_late', 
-        count: inProgress.length 
+      {
+        ...getTaskStatusInfo('in_progress'),
+        icon: 'assignment_late',
+        count: inProgress.length
       }
     ];
   });
@@ -75,6 +77,7 @@ export class DashboardView implements OnDestroy {
 
   private _effectRef = effect(() => {
     console.log(this._taskService.allTasks())
+    console.log(this._preferencesService.userPreference())
     this.tasksCount.set(this.pendingAndProgressTasks().length)
   })
 
