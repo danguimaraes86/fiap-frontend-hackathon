@@ -5,7 +5,7 @@ import { MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDi
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { THEMES } from '../../../models/user-preferences.models';
 import { UserPreferencesService } from '../../../services/user-preferences.service';
 
@@ -65,6 +65,23 @@ export class UserPreferencesForm {
       ...this.preferencesForm.getRawValue()
     })
     this._dialogRef.close();
+  }
+
+  handleFocusMode(event: MatSlideToggleChange): void {
+    if (event.checked) {
+      this.preferencesForm.patchValue({
+        showCompletedTasks: false,
+        showPendingTasks: false
+      });
+    }
+  }
+
+  handleFilterChange(event: MatSlideToggleChange): void {
+    if (event.checked) {
+      this.preferencesForm.patchValue({
+        focusMode: false
+      });
+    }
   }
 
 }

@@ -25,6 +25,6 @@ export const DEFAULT_USER_PREFERENCES: Omit<UserPreferences, 'id' | 'userId'> = 
   theme: 'light',
   focusMode: false,
 
-  showCompletedTasks: false,
+  showCompletedTasks: true,
   showPendingTasks: true,
 }

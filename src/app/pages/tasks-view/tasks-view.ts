@@ -1,17 +1,16 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatDivider, MatList, MatListSubheaderCssMatStyler } from '@angular/material/list';
-import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { FilterPanel } from "../../components/filter-panel/filter-panel";
 import { FloatingButton } from "../../components/floating-button/floating-button";
 import { TaskDetail } from "../../components/task-detail/task-detail";
 import { TaskService } from '../../services/task.service';
+import { UserPreferencesService } from '../../services/user-preferences.service';
 
 @Component({
   selector: 'app-tasks-view',
   imports: [
     MatList,
     MatDivider,
-    MatSlideToggle,
     MatListSubheaderCssMatStyler,
     TaskDetail,
     FloatingButton,
@@ -21,36 +20,44 @@ import { TaskService } from '../../services/task.service';
   styleUrl: './tasks-view.scss',
 })
 export class TasksView {
-  protected _taskService = inject(TaskService);
+  private _taskService = inject(TaskService);
+  private _userPreferences = inject(UserPreferencesService)
+
   protected allTasks = this._taskService.allTasks
   protected completedTasks = this._taskService.completedTasks
+
+  protected showPendingTasks = computed(() => {
+    return this._userPreferences.userPreference().showPendingTasks
+  })
+
+  protected showCompletedTasks = computed(() => {
+    return this._userPreferences.userPreference().showCompletedTasks
+  })
 
   protected titleFilter = signal<string>('');
   protected statusFilter = signal<string>('');
 
   protected pendingAndProgressTasks = computed(() => {
     let tasks = this._taskService.pendingAndProgressTasks();
-    const title = this.titleFilter().toLowerCase().trim();
-    const status = this.statusFilter();
 
+    if (!this.showPendingTasks()) {
+      tasks = tasks.filter(task => task.status != 'pending')
+    }
+
+    const title = this.titleFilter().toLowerCase().trim();
     if (title) {
       tasks = tasks.filter(task =>
         task.title?.toLowerCase().includes(title)
       );
     }
 
+    const status = this.statusFilter();
     if (status) {
       tasks = tasks.filter(task => task.status === status);
     }
 
     return tasks;
   });
-
-  protected visibilityCompletedTasks = signal<boolean>(false)
-
-  protected handleShowCompletedTasks(event: MatSlideToggleChange) {
-    this.visibilityCompletedTasks.set(event.checked)
-  }
 
   protected onTitleFilterChange(value: string) {
     this.titleFilter.set(value);

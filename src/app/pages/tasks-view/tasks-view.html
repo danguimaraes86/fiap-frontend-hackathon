@@ -17,23 +17,16 @@
     }
   </mat-list>
 
-  <div class="mt-5">
-    <div class="d-flex justify-content-center">
-      <mat-slide-toggle labelPosition="before" (change)="handleShowCompletedTasks($event)"
-        >Mostrar Tarefas Concluídas</mat-slide-toggle
-      >
-    </div>
-    @if (visibilityCompletedTasks()) {
-      <mat-list>
-        <h3 mat-subheader>Tarefas Concluídas</h3>
+  @if (showCompletedTasks()) {
+    <mat-list class="mt-5">
+      <h3 mat-subheader>Tarefas Concluídas</h3>
+      <mat-divider></mat-divider>
+      @for (task of completedTasks(); track task.id) {
+        <app-task-detail [task]="task"></app-task-detail>
         <mat-divider></mat-divider>
-        @for (task of completedTasks(); track task.id) {
-          <app-task-detail [task]="task"></app-task-detail>
-          <mat-divider></mat-divider>
-        }
-      </mat-list>
-    }
-  </div>
+      }
+    </mat-list>
+  }
 
   <app-floating-button />
 </div>
