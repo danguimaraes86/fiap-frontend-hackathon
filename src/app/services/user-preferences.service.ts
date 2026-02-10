@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { DEFAULT_USER_PREFERENCES, UserPreferences } from '../models/user-preferences.models';
 import { UserPreferencesRepository } from './repositories/user-preferences-repository';
 
@@ -12,9 +12,23 @@ export class UserPreferencesService {
   private _userPreference = signal<UserPreferences>({ ...DEFAULT_USER_PREFERENCES, userId: null, id: null })
   public userPreference = this._userPreference.asReadonly()
 
+  public theme = computed(() => {
+    return this._userPreference().theme
+  })
+
+  constructor() {
+    // Aplica o tema ao inicializar o serviço
+    this.applyTheme(this.theme())
+  }
+
   async getUserPreferences(userId: string) {
     const preferences = await this._repository.getUserPreferences(userId)
-    preferences ? this._userPreference.set(preferences) : this.createUserPreference(userId)
+    if (preferences) {
+      this._userPreference.set(preferences)
+      this.applyTheme(this.theme())
+    } else {
+      this.createUserPreference(userId)
+    }
   }
 
   async createUserPreference(userId: string) {
@@ -23,6 +37,8 @@ export class UserPreferencesService {
     }
     const docId = await this._repository.createUserPreferences(preferences)
     this._userPreference.set({ id: docId, ...preferences })
+    this.applyTheme(this.theme())
+
   }
 
   async updateUserPreference(preferences: UserPreferences) {
@@ -30,6 +46,19 @@ export class UserPreferencesService {
     this._userPreference.update(value => {
       return { ...value, ...preferences }
     })
+    this.applyTheme(this.theme())
+
   }
 
+  private applyTheme(theme: 'light' | 'dark') {
+    const htmlElement = document.documentElement
+
+    if (theme === 'dark') {
+      htmlElement.classList.add('dark-theme')
+      document.body.style.colorScheme = 'dark'
+    } else {
+      htmlElement.classList.remove('dark-theme')
+      document.body.style.colorScheme = 'light'
+    }
+  }
 }

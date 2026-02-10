@@ -18,10 +18,6 @@ export const THEMES = {
     value: 'dark',
     label: 'Escuro'
   },
-  AUTO: {
-    value: 'auto',
-    label: 'Auto'
-  }
 } as const
 export type ThemeType = typeof THEMES[keyof typeof THEMES]['value']
 

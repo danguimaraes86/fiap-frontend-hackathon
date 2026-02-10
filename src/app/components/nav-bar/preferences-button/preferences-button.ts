@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { UserPreferencesForm } from '../../forms/user-preferences-form/user-preferences-form';
@@ -8,6 +8,7 @@ import { UserPreferencesForm } from '../../forms/user-preferences-form/user-pref
   selector: 'app-preferences-button',
   imports: [
     MatButton,
+    MatIconButton,
     MatIcon
   ],
   templateUrl: './preferences-button.html',

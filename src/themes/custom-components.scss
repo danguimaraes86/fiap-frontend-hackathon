@@ -10,7 +10,7 @@
     )
   );
 
-  .mat-expansion-panel-body{
+  .mat-expansion-panel-body {
     padding: 0px;
   }
 }
@@ -47,6 +47,7 @@
     (
       elevated-container-color: mat.get-theme-color(theme.$custom-theme, tertiary, 90),
       hover-state-layer-color: mat.get-theme-color(theme.$custom-theme, neutral, 40),
+      label-text-color: mat.get-theme-color(theme.$custom-theme, neutral, 20),
     )
   );
 }
@@ -56,6 +57,7 @@
     (
       elevated-container-color: mat.get-theme-color(theme.$custom-theme, primary, 90),
       hover-state-layer-color: mat.get-theme-color(theme.$custom-theme, neutral, 40),
+      label-text-color: mat.get-theme-color(theme.$custom-theme, neutral, 20),
     )
   );
 }
@@ -65,6 +67,7 @@
     (
       elevated-container-color: mat.get-theme-color(theme.$custom-theme, secondary, 90),
       hover-state-layer-color: mat.get-theme-color(theme.$custom-theme, neutral, 40),
+      label-text-color: mat.get-theme-color(theme.$custom-theme, neutral, 20),
     )
   );
 }

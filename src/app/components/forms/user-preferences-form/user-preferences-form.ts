@@ -10,7 +10,7 @@ import { THEMES } from '../../../models/user-preferences.models';
 import { UserPreferencesService } from '../../../services/user-preferences.service';
 
 interface UserPreferencesFormData {
-  theme: FormControl<'light' | 'dark' | 'auto'>,
+  theme: FormControl<'light' | 'dark'>,
   focusMode: FormControl<boolean>,
   showCompletedTasks: FormControl<boolean>,
   showPendingTasks: FormControl<boolean>,
