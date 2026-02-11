@@ -37,6 +37,10 @@
   .mat-expansion-panel-body {
     padding: 0px;
   }
+
+  .cdk-overlay-pane.mat-mdc-dialog-panel{
+    justify-content: center;
+  }
 }
 
 .error-snackbar {
