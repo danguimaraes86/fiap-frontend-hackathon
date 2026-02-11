@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DashboardView } from './dashboard-view';
-import { TaskService } from '../../services/task.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { TaskService } from '../../services/task.service';
+import { DashboardView } from './dashboard-view';
 
 describe('DashboardView', () => {
   let component: DashboardView;
@@ -19,7 +19,8 @@ describe('DashboardView', () => {
       getAllTask: vi.fn(),
       allTasks: vi.fn().mockReturnValue([]),
       completedTasks: vi.fn().mockReturnValue([]),
-      pendingAndProgressTasks: vi.fn().mockReturnValue([]),
+      inProgressTasks: vi.fn().mockReturnValue([]),
+      pendingTasks: vi.fn().mockReturnValue([]),
     };
 
     await TestBed.configureTestingModule({

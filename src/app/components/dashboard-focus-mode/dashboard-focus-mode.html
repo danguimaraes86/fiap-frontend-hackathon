@@ -1,0 +1,12 @@
+@if (inProgressTasks().count) {
+  <mat-list>
+    <h3 mat-subheader>Tarefas</h3>
+    <mat-divider></mat-divider>
+    @for (task of inProgressTasks().itens; track task.id) {
+      <app-task-detail [task]="task"></app-task-detail>
+      <mat-divider></mat-divider>
+    }
+  </mat-list>
+} @else {
+  <mat-icon class="large-icon">self_improvement</mat-icon>
+}

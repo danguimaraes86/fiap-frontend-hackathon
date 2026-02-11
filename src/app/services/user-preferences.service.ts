@@ -1,4 +1,5 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { DEFAULT_USER_PREFERENCES, UserPreferences } from '../models/user-preferences.models';
 import { UserPreferencesRepository } from './repositories/user-preferences-repository';
 
@@ -6,8 +7,8 @@ import { UserPreferencesRepository } from './repositories/user-preferences-repos
   providedIn: 'root',
 })
 export class UserPreferencesService {
-
   private _repository = inject(UserPreferencesRepository)
+  private _router = inject(Router)
 
   private _userPreference = signal<UserPreferences>({ ...DEFAULT_USER_PREFERENCES, userId: null, id: null })
   public userPreference = this._userPreference.asReadonly()
@@ -42,7 +43,15 @@ export class UserPreferencesService {
       return { ...value, ...preferences }
     })
     this.applyTheme(preferences.theme)
+    this.handleFocusModeRedirect(preferences.focusMode)
+  }
 
+  private handleFocusModeRedirect(focusMode: boolean) {
+    const currentUrl = this._router.url
+
+    if (focusMode && currentUrl === '/tasks') {
+      this._router.navigate(['/dashboard'])
+    }
   }
 
   private applyTheme(theme: 'light' | 'dark') {
